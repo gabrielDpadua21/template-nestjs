@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+    template_database:
+        image: postgres:alpine
+        ports:
+         - "5432:5432"
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: Toor@1234
+          POSTGRES_DB: template_db
+        volumes:
+         - template-data:/var/lib/postgresql/data
+
+    adminer:
+        image: adminer
+        ports:
+         - 8080:8080
+
+volumes:
+    template-data:
