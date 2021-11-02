@@ -8,7 +8,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-
+import * as bcrypt from 'bcrypt';
 @Entity()
 @Unique(['email'])
 export class User extends BaseEntity {
@@ -30,7 +30,7 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false, select: false })
+  @Column({ nullable: false })
   salt: string;
 
   @Column({ nullable: true, type: 'varchar', length: 64 })
@@ -47,4 +47,9 @@ export class User extends BaseEntity {
 
   @DeleteDateColumn({ select: false })
   deletedAt: Date;
+
+  async checkPassword(password: string): Promise<boolean> {
+    const hash = await bcrypt.hash(password, this.salt);
+    return hash === this.password;
+  }
 }
