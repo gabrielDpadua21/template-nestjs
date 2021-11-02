@@ -11,12 +11,6 @@ export class UsersService {
     @InjectRepository(UserRepository) private userRepository: UserRepository,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    if (createUserDto.password !== createUserDto.passwordConfirm)
-      throw new UnprocessableEntityException('password is not equal');
-    return this.userRepository.createUser(createUserDto, UserRole.USER);
-  }
-
   async createAdmin(createUserDto: CreateUserDto): Promise<User> {
     if (createUserDto.password !== createUserDto.passwordConfirm)
       throw new UnprocessableEntityException('password is not equal');

@@ -8,13 +8,13 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @Post()
-  async create(
-    @Body(ValidationPipe) createUserDto: CreateUserDto,
-  ): Promise<ResponseDto> {
-    const user = await this.userService.create(createUserDto);
-    return new ResponseDto(user, 'Successs');
-  }
+  // @Post()
+  // async create(
+  //   @Body(ValidationPipe) createUserDto: CreateUserDto,
+  // ): Promise<ResponseDto> {
+  //   const user = await this.userService.create(createUserDto);
+  //   return new ResponseDto(user, 'Successs');
+  // }
 
   @Post('/admin')
   async createAdmin(

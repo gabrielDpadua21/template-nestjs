@@ -45,16 +45,6 @@ describe('Users tests', () => {
       );
     });
 
-    it('Should create an user if passwords match', async () => {
-      userRepository.createUser.mockResolvedValue('mockUser');
-      const user = await service.create(mockCreateUserDto);
-      expect(userRepository.createUser).toHaveBeenCalledWith(
-        mockCreateUserDto,
-        UserRole.USER,
-      );
-      expect(user).toEqual('mockUser');
-    });
-
     it('Should create an admin user if password match', async () => {
       userRepository.createUser.mockResolvedValue('mockAdminUser');
       const adminUser = await service.createAdmin(mockCreateUserDto);
@@ -63,13 +53,6 @@ describe('Users tests', () => {
         UserRole.ADMIN,
       );
       expect(adminUser).toEqual('mockAdminUser');
-    });
-
-    it('Should throw an error if password doesnt match', async () => {
-      mockCreateUserDto.passwordConfirm = 'error';
-      expect(service.create(mockCreateUserDto)).rejects.toThrow(
-        UnprocessableEntityException,
-      );
     });
 
     it('Should throw an error if password doesnt match when create admin', async () => {
