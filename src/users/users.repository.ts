@@ -8,6 +8,7 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { CredentialsDto } from '../auth/dtos/credentials.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -37,5 +38,12 @@ export class UserRepository extends Repository<User> {
         throw new ConflictException('E-mail address is used');
       throw new InternalServerErrorException('Error to save data in database');
     }
+  }
+
+  async checkCredentials(credentialsDto: CredentialsDto): Promise<User> {
+    const { email, password } = credentialsDto;
+    const user = await this.findOne({ email, status: true });
+    if (user && (await user.checkPassword(password))) return user;
+    return null;
   }
 }
