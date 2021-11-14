@@ -4,9 +4,13 @@ import { UserRepository } from './users.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserRole } from './enums/users-role.enum';
 import { UnprocessableEntityException } from '@nestjs/common';
+import { User } from './users.entity';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 const mockUserRepository = () => ({
   createUser: jest.fn(),
+  findUserById: jest.fn(),
+  updateUser: jest.fn(),
 });
 
 describe('Users tests', () => {
@@ -60,6 +64,45 @@ describe('Users tests', () => {
       expect(service.createAdmin(mockCreateUserDto)).rejects.toThrow(
         UnprocessableEntityException,
       );
+    });
+  });
+
+  describe('Find user by id', () => {
+    let mockUser: User;
+
+    beforeEach(() => {
+      mockUser = new User();
+      mockUser.id = '1';
+    });
+
+    it('Should return user when is is valid', async () => {
+      userRepository.findUserById.mockResolvedValue(mockUser);
+      const user = await service.findUserById('1');
+      expect(user.id).toBe('1');
+    });
+  });
+
+  describe('Update user', () => {
+    let mockUserUpdateDto: UpdateUserDto;
+    let mockUser: User;
+
+    beforeEach(() => {
+      mockUserUpdateDto = new UpdateUserDto(
+        'mock',
+        'mock@gmail.com',
+        UserRole.ADMIN,
+        true,
+      );
+      mockUser = new User();
+      mockUser.id = '1';
+    });
+
+    it('Should update user', async () => {
+      userRepository.findUserById.mockResolvedValue(mockUser);
+      expect(mockUser.id).toBe('1');
+      userRepository.updateUser.mockResolvedValue('mockUpdateUser');
+      const user = await service.updateUser('1', mockUserUpdateDto);
+      expect(user).toBe('mockUpdateUser');
     });
   });
 });
