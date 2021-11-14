@@ -4,6 +4,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UserRole } from './enums/users-role.enum';
 import { User } from './users.entity';
 import { UserRepository } from './users.repository';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,5 +17,17 @@ export class UsersService {
     if (createUserDto.password !== createUserDto.passwordConfirm)
       throw new UnprocessableEntityException('password is not equal');
     return this.userRepository.createUser(createUserDto, UserRole.ADMIN);
+  }
+
+  async findUserById(userId: string): Promise<User> {
+    return await this.userRepository.findUserById(userId);
+  }
+
+  async updateUser(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    const user = await this.userRepository.findUserById(userId);
+    return await this.userRepository.updateUser(user, updateUserDto);
   }
 }
