@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CredentialsDto } from '../auth/dtos/credentials.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -47,6 +48,26 @@ export class UserRepository extends Repository<User> {
     const user = await this.findOne({ email, status: true });
     if (user && (await user.checkPassword(password))) return user;
     return null;
+  }
+
+  async findUsers(
+    queryDto: FindUsersQueryDto,
+  ): Promise<{ users: User[]; total: number }> {
+    queryDto.status = queryDto.status ?? true;
+    queryDto.page = queryDto.page ?? 1;
+    queryDto.limit = queryDto.limit ?? 50;
+    const { email, name, status, role } = queryDto;
+    const query = this.createQueryBuilder('user');
+    query.where('user.status = :status', { status });
+    if (email) query.where('user.email ILIKE :email', { email: `%${email}%` });
+    if (name) query.where('user.name ILIKE :name', { name: `%${name}%` });
+    if (role) query.where('user.role = :role', { role });
+    query.skip((queryDto.page - 1) * queryDto.limit);
+    query.take(+queryDto.limit);
+    query.orderBy(queryDto.sort ? JSON.parse(queryDto.sort) : undefined);
+    query.select(['user.name', 'user.email', 'user.role', 'user.status']);
+    const [users, total] = await query.getManyAndCount();
+    return { users, total };
   }
 
   async findUserById(userId: string): Promise<User> {

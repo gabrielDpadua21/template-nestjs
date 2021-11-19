@@ -20,6 +20,7 @@ import { Role } from 'src/auth/role.decorator';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { GetUser } from 'src/auth/get-user.docorator';
 import { User } from './users.entity';
+import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 
 @Controller('users')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -40,6 +41,15 @@ export class UsersController {
   async findUserById(@Param('id') id: string): Promise<ResponseDto> {
     const user = await this.userService.findUserById(id);
     return new ResponseDto(user, 'User Found');
+  }
+
+  @Get()
+  @Role(UserRole.ADMIN)
+  async findUsers(
+    @Body() findUsersQueryDto: FindUsersQueryDto,
+  ): Promise<ResponseDto> {
+    const users = await this.userService.findUsers(findUsersQueryDto);
+    return new ResponseDto(users, 'Success');
   }
 
   @Put(':id')

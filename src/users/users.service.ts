@@ -5,6 +5,7 @@ import { UserRole } from './enums/users-role.enum';
 import { User } from './users.entity';
 import { UserRepository } from './users.repository';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 
 @Injectable()
 export class UsersService {
@@ -33,5 +34,11 @@ export class UsersService {
 
   async deleteUser(id: string): Promise<boolean> {
     return await this.userRepository.deleteUser(id);
+  }
+
+  async findUsers(
+    queryUserDto: FindUsersQueryDto,
+  ): Promise<{ users: User[]; total: number }> {
+    return await this.userRepository.findUsers(queryUserDto);
   }
 }

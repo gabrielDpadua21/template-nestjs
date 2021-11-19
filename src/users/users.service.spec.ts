@@ -6,12 +6,14 @@ import { UserRole } from './enums/users-role.enum';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { User } from './users.entity';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 
 const mockUserRepository = () => ({
   createUser: jest.fn(),
   findUserById: jest.fn(),
   updateUser: jest.fn(),
   deleteUser: jest.fn(),
+  findUsers: jest.fn(),
 });
 
 describe('Users tests', () => {
@@ -120,6 +122,27 @@ describe('Users tests', () => {
       const result = await service.deleteUser('1');
       expect(userRepository.deleteUser).toBeCalledWith('1');
       expect(result).toBeTruthy();
+    });
+  });
+
+  describe('Find users', () => {
+    let mockQueryUsersDto: FindUsersQueryDto;
+    let mockUser: User;
+
+    beforeEach(() => {
+      mockQueryUsersDto = new FindUsersQueryDto();
+      mockUser = new User();
+      mockUser.id = '1';
+    });
+
+    it('should find user by params', async () => {
+      userRepository.findUsers.mockResolvedValue({
+        users: [mockUser],
+        total: 1,
+      });
+      const users = await service.findUsers(mockQueryUsersDto);
+      expect(userRepository.findUsers).toBeCalledWith(mockQueryUsersDto);
+      expect(users.total).toEqual(1);
     });
   });
 });
