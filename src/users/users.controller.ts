@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   Param,
@@ -52,5 +53,17 @@ export class UsersController {
       throw new ForbiddenException('You dont have permission for this action');
     const user = await this.userService.updateUser(id, updateUserDto);
     return new ResponseDto(user, 'Success');
+  }
+
+  @Delete(':id')
+  @Role(UserRole.ADMIN)
+  async deleteUser(
+    @GetUser() reqUser: User,
+    @Param('id') id: string,
+  ): Promise<ResponseDto> {
+    if (reqUser.id === id)
+      throw new ForbiddenException('You cant delete your user');
+    const result = await this.userService.deleteUser(id);
+    return new ResponseDto(result, 'Sucess');
   }
 }

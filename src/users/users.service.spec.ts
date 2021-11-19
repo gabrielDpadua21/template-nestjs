@@ -11,6 +11,7 @@ const mockUserRepository = () => ({
   createUser: jest.fn(),
   findUserById: jest.fn(),
   updateUser: jest.fn(),
+  deleteUser: jest.fn(),
 });
 
 describe('Users tests', () => {
@@ -103,6 +104,22 @@ describe('Users tests', () => {
       userRepository.updateUser.mockResolvedValue('mockUpdateUser');
       const user = await service.updateUser('1', mockUserUpdateDto);
       expect(user).toBe('mockUpdateUser');
+    });
+  });
+
+  describe('Delete user', () => {
+    let mockUser: User;
+
+    beforeEach(() => {
+      mockUser = new User();
+      mockUser.id = '1';
+    });
+
+    it('should delete user if exists', async () => {
+      userRepository.deleteUser.mockResolvedValue(true);
+      const result = await service.deleteUser('1');
+      expect(userRepository.deleteUser).toBeCalledWith('1');
+      expect(result).toBeTruthy();
     });
   });
 });

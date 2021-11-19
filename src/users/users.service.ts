@@ -30,4 +30,8 @@ export class UsersService {
     const user = await this.userRepository.findUserById(userId);
     return await this.userRepository.updateUser(user, updateUserDto);
   }
+
+  async deleteUser(id: string): Promise<boolean> {
+    return await this.userRepository.deleteUser(id);
+  }
 }

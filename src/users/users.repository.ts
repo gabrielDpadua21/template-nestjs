@@ -72,4 +72,10 @@ export class UserRepository extends Repository<User> {
       throw new InternalServerErrorException('Error to save data');
     }
   }
+
+  async deleteUser(id: string): Promise<boolean> {
+    const result = await this.delete({ id });
+    if (result.affected === 0) throw new NotFoundException('User not found');
+    return true;
+  }
 }
